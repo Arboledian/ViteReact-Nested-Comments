@@ -75,7 +75,7 @@ app.get("/posts/:id", async (req, res) => {
   );
 });
 
-app.get("/posts/:id/comments", async (req, res) => {
+app.post("/posts/:id/comments", async (req, res) => {
   if (req.body.message === "" || req.body.message == null) {
     return res.send(app.httpErrors.badRequest("Message is required"));
   }
@@ -83,10 +83,10 @@ app.get("/posts/:id/comments", async (req, res) => {
   return await commitToDB(
     prisma.comment.create({
       data: {
-        message: req.bodu.message,
+        message: req.body.message,
         userId: req.cookies.userId,
         parentId: req.body.parentId,
-        postId: req.post.id,
+        postId: req.params.id,
       },
       select: COMMENT_SELECT_FIELDS,
     })
