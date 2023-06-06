@@ -40,8 +40,50 @@ export function PostProvider({ children }) {
   }
 
   function createLocalComment(comment) {
-    setComments(prevComment => {
-      return [comment, ...prevComment];
+    setComments(prevComments => {
+      return [comment, ...prevComments];
+    });
+  }
+
+  function updateLocalComment(id, message) {
+    setComments(prevComments => {
+      return prevComments.map(comment => {
+        if (comment.id === id) {
+          return { ...comment, message };
+        } else {
+          return comment;
+        }
+      });
+    });
+  }
+
+  function deleteLocalComment(id) {
+    setComments(prevComments => {
+      return prevComments.filter(comment => comment.id !== id);
+    });
+  }
+
+  function toggleLocalCommentLike(id, addLike) {
+    setComments(prevComments => {
+      return prevComments.map(comment => {
+        if (id === comment.id) {
+          if (addLike) {
+            return {
+              ...comment,
+              likeCount: comment.likeCount + 1,
+              likedByMe: true,
+            };
+          } else {
+            return {
+              ...comment,
+              likeCount: comment.likeCount + 1,
+              likedByMe: false,
+            };
+          }
+        } else {
+          return comment;
+        }
+      });
     });
   }
 
@@ -52,6 +94,9 @@ export function PostProvider({ children }) {
         rootComments: commentsByParentId[null],
         getReplies,
         createLocalComment,
+        updateLocalComment,
+        deleteLocalComment,
+        toggleLocalCommentLike,
       }}
     >
       {loading ? (
